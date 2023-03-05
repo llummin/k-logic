@@ -4,31 +4,30 @@ import java.util.Vector;
 
 public class SaveSet {
 
-  static int g_k;
-  static int g_n;
-  static int g_size;
-  static Stack<int[]> g_stack;
+  static int gK;
+  static int gN;
+  static Stack<int[]> gStack;
 
   public static void inputSet(String str, Vector<Integer> arr) throws Exception {
     int number = 0;
     String temp;
-    int index_start = str.indexOf(' ');
-    while (index_start != -1) {
-      temp = str.substring(0, index_start);
-      str = str.substring(index_start + 1);
+    int indexStart = str.indexOf(' ');
+    while (indexStart != -1) {
+      temp = str.substring(0, indexStart);
+      str = str.substring(indexStart + 1);
 
       if (AdditionalFunc.tryParse(temp, new int[]{number})) {
-        if (number > g_k - 1) {
+        if (number > gK - 1) {
           throw new Exception("В множестве найдено число больше k-1\n");
         }
         arr.add(number);
       }
 
-      index_start = str.indexOf(' ');
+      indexStart = str.indexOf(' ');
       number = 500;
     }
     if (AdditionalFunc.tryParse(str, new int[]{number})) {
-      if (number > g_k - 1) {
+      if (number > gK - 1) {
         throw new Exception("В множестве найдено число больше k-1\n");
       }
       arr.add(number);
@@ -39,28 +38,28 @@ public class SaveSet {
     Scanner scanner = new Scanner(System.in);
     System.out.print("Введите через пробел множество: ");
     String str = scanner.nextLine();
-    Vector<Integer> my_set = new Vector<>();
+    Vector<Integer> mySet = new Vector<>();
     try {
-      inputSet(str, my_set);
-      int[] res_table = g_stack.peek();
+      inputSet(str, mySet);
+      int[] resTable = gStack.peek();
 
       int index;
       String temporary;
 
-      if (g_n == 2) {
+      if (gN == 2) {
         int iterator = 0;
-        int[][] new_arr = new int[g_k][];
+        int[][] newArr = new int[gK][];
 
-        for (int i = 0; i < g_k; i++) {
-          new_arr[i] = new int[g_k];
-          for (int j = 0; j < g_k; j++) {
-            new_arr[i][j] = res_table[iterator++];
+        for (int i = 0; i < gK; i++) {
+          newArr[i] = new int[gK];
+          for (int j = 0; j < gK; j++) {
+            newArr[i][j] = resTable[iterator++];
           }
         }
 
-        for (int i = 0; i < my_set.size(); i++) {
-          for (int j = 0; j < my_set.size(); j++) {
-            temporary = String.valueOf(new_arr[my_set.get(i)][my_set.get(j)]);
+        for (int i = 0; i < mySet.size(); i++) {
+          for (Integer integer : mySet) {
+            temporary = String.valueOf(newArr[mySet.get(i)][integer]);
             index = str.indexOf(temporary);
             if (index == -1) {
               System.out.println("Функция не сохраняет данное множество!");
@@ -70,13 +69,12 @@ public class SaveSet {
           }
         }
 
-        for (int j = 0; j < g_k; j++) {
-          new_arr[j] = null;
+        for (int j = 0; j < gK; j++) {
+          newArr[j] = null;
         }
-        new_arr = null;
       } else {
-        for (int i = 0; i < my_set.size(); i++) {
-          temporary = String.valueOf(res_table[my_set.get(i)]);
+        for (Integer integer : mySet) {
+          temporary = String.valueOf(resTable[integer]);
           index = str.indexOf(temporary);
           if (index == -1) {
             System.out.println("Функция не сохраняет данное множество!");

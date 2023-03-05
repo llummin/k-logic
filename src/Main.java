@@ -3,24 +3,24 @@ import java.util.Stack;
 
 public class Main {
 
-  static int g_k = 5;
-  static int g_n = 1;
-  static int g_size;
-  static Stack<int[]> g_stack = new Stack<int[]>();
+  static int gK = 5;
+  static int gN = 1;
+  static int gSize;
+  static Stack<int[]> gStack = new Stack<>();
 
   public static void main(String[] args) {
     Scanner sc = new Scanner(System.in);
     AdditionalFunc.printHat();
-    int user_opinion = -1;
+    int userOpinion = -1;
 
-    while (user_opinion != 0) {
+    while (userOpinion != 0) {
       System.out.print("Введите число k: ");
-      g_k = AdditionalFunc.getValue(15, "Введите число k: ");
+      gK = AdditionalFunc.getValue(15, "Введите число k: ");
 
       System.out.print("Введите число n (1 или 2): ");
-      g_n = AdditionalFunc.getValue(17, "Введите число k: ");
+      gN = AdditionalFunc.getValue(17, "Введите число k: ");
 
-      g_size = (int) Math.pow(g_k, g_n);
+      gSize = (int) Math.pow(gK, gN);
 
       sc.nextLine();
       System.out.print("Введите функцию: ");
@@ -47,14 +47,14 @@ public class Main {
         boolean check = false;
         SaveSet.saveSet(new boolean[]{check});
 
-        int[] result = g_stack.pop();
+        int[] result = gStack.pop();
         result = null;
       } catch (Exception e) {
         System.out.println("\nВведенные данные некорректны!\n");
       }
 
       System.out.print("\nДля продолжения работы нажмите 1, если хотите выйти - 0\nВведите: ");
-      user_opinion = AdditionalFunc.getValue(16,
+      userOpinion = AdditionalFunc.getValue(16,
           "Для начала работы нажмите 1, если хотите выйти - 0\n");
     }
   }
@@ -65,22 +65,22 @@ public class Main {
       return false;
     }
 
-    int open_backets = 0;
-    int close_backet = 0;
+    int openBackets = 0;
+    int closeBackets = 0;
     boolean alert = false;
     int temp = -1;
     for (int i = 0; i < str.length(); i++) {
       char c = str.charAt(i);
       if (c == '(') {
-        open_backets++;
+        openBackets++;
       } else if (c == ')') {
         alert = false;
-        close_backet++;
+        closeBackets++;
       } else if (AdditionalFunc.tryParse(c)) {
         alert = true;
       } else if (c == '*') {
         alert = false;
-      } else if (c == 'y' && g_n == 1) {
+      } else if (c == 'y' && gN == 1) {
         System.out.println("Обнаружен y при n = 1!\n");
         return false;
       } else if (c == 'x' || c == 'y' || c == '-') {
@@ -93,66 +93,66 @@ public class Main {
         return false;
       }
     }
-    if (open_backets != close_backet) {
+    if (openBackets != closeBackets) {
       System.out.println("Первичный осмотр показал проблему в скобках\n");
       return false;
     }
     return true;
   }
 
-  static void analyze(String analytic_form) throws Exception {
-    int index_start = -1;
-    int index_end = -1;
+  static void analyze(String analyticForm) throws Exception {
+    int indexStart = -1;
+    int indexEnd = -1;
 
-    index_start = analytic_form.indexOf('(');
+    indexStart = analyticForm.indexOf('(');
 
-    while (index_start != -1) {
-      int count_open_bracket = 1;
-      index_end = index_start;
-      while (count_open_bracket != 0) {
-        index_end++;
-        if (analytic_form.charAt(index_end) == '(') {
-          count_open_bracket++;
-        } else if (analytic_form.charAt(index_end) == ')') {
-          count_open_bracket--;
+    while (indexStart != -1) {
+      int countOpenBracket = 1;
+      indexEnd = indexStart;
+      while (countOpenBracket != 0) {
+        indexEnd++;
+        if (analyticForm.charAt(indexEnd) == '(') {
+          countOpenBracket++;
+        } else if (analyticForm.charAt(indexEnd) == ')') {
+          countOpenBracket--;
         }
       }
 
-      String new_form = analytic_form.substring(index_start + 1, index_end);
-      analytic_form =
-          analytic_form.substring(0, index_start) + analytic_form.substring(index_end + 1);
+      String new_form = analyticForm.substring(indexStart + 1, indexEnd);
+      analyticForm =
+          analyticForm.substring(0, indexStart) + analyticForm.substring(indexEnd + 1);
 
       analyze(new_form);
 
-      index_start = analytic_form.indexOf('(');
+      indexStart = analyticForm.indexOf('(');
     }
 
-    int index_multiplacation = -1;
-    index_multiplacation = analytic_form.indexOf('*');
+    int indexMultiplacation = -1;
+    indexMultiplacation = analyticForm.indexOf('*');
 
-    if (index_multiplacation != -1) {
-      String front_part = analytic_form.substring(0, index_multiplacation);
-      String end_part = analytic_form.substring(index_multiplacation + 1, analytic_form.length());
-      analytic_form = "*";
-      if (front_part.length() > 0) {
-        analyze(front_part);
+    if (indexMultiplacation != -1) {
+      String frontPart = analyticForm.substring(0, indexMultiplacation);
+      String endPart = analyticForm.substring(indexMultiplacation + 1, analyticForm.length());
+      analyticForm = "*";
+      if (frontPart.length() > 0) {
+        analyze(frontPart);
       }
-      if (end_part.length() > 0) {
-        analyze(end_part);
+      if (endPart.length() > 0) {
+        analyze(endPart);
       }
     }
 
     int index_negotiation = -1;
-    index_negotiation = analytic_form.indexOf('-');
+    index_negotiation = analyticForm.indexOf('-');
 
     if (index_negotiation != -1) {
-      String end_part = analytic_form.substring(index_negotiation + 1, analytic_form.length());
-      analytic_form = "-";
+      String end_part = analyticForm.substring(index_negotiation + 1, analyticForm.length());
+      analyticForm = "-";
       if (end_part.length() > 0) {
         analyze(end_part);
       }
     }
 
-    Calculate.calculate(analytic_form);
+    Calculate.calculate(analyticForm);
   }
 }

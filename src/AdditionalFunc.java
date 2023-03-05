@@ -3,10 +3,10 @@ import java.util.Stack;
 
 public class AdditionalFunc {
 
-  public static int g_k;
-  public static int g_n;
-  public static int g_size;
-  public static Stack<int[]> g_stack = new Stack<>();
+  public static int gK;
+  public static int gN;
+  public static int gSize;
+  public static Stack<int[]> gStack = new Stack<>();
 
   public static boolean tryParse(char ch) {
     try {
@@ -48,7 +48,6 @@ public class AdditionalFunc {
           }
           System.out.println("Вы должны ввести натуральное число, меньше 100!\n Повторите ввод: ");
           scanner.nextLine();
-          continue;
         }
         case 16 -> {
           if ((a == 0) || (a == 1)) {
@@ -56,7 +55,6 @@ public class AdditionalFunc {
           }
           System.out.println("Вы должны ввести либо 0, либо 1\n");
           scanner.nextLine();
-          continue;
         }
         case 17 -> {
           if ((a > 0) && (a < 3)) {
@@ -64,7 +62,6 @@ public class AdditionalFunc {
           }
           System.out.println("Вы должны ввести либо 1, либо 2! Повторите ввод: ");
           scanner.nextLine();
-          continue;
         }
         default -> {
           return a;
@@ -86,25 +83,23 @@ public class AdditionalFunc {
   }
 
   public static void printRes(String expression) {
-    int[] result = g_stack.peek();
+    int[] result = gStack.peek();
     int temp = expression.length() % 2;
     int width1 = (expression.length() + temp) / 2;
     int width2 = (expression.length() - temp) / 2;
 
     System.out.println("\nРезультат работы программы:\n");
-    if (g_n == 1) {
+    if (gN == 1) {
       System.out.printf("| X | %-" + expression.length() + "s |\n", expression);
-      for (int i = 0; i < g_size; i++) {
+      for (int i = 0; i < gSize; i++) {
         System.out.printf("| %d | %-" + width1 + "d%-" + width2 + "s |\n", i, result[i], "");
       }
-
-    } else if (g_n == 2) {
+    } else if (gN == 2) {
       System.out.printf("| X | Y | %-" + expression.length() + "s |\n", expression);
-      for (int i = 0; i < g_size; i++) {
-        System.out.printf("| %d | %d | %-" + width1 + "d%-" + width2 + "s |\n", i / g_k, i % g_k,
+      for (int i = 0; i < gSize; i++) {
+        System.out.printf("| %d | %d | %-" + width1 + "d%-" + width2 + "s |\n", i / gK, i % gK,
             result[i], "");
       }
-
     }
   }
 

@@ -2,31 +2,29 @@ import java.util.Stack;
 
 public class Calculate {
 
-  public static int g_k;
-  public static int g_n;
-  public static int g_size;
-  public static Stack<int[]> g_stack = new Stack<>();
+  public static int gK;
+  public static int gN;
+  public static int gSize;
+  public static Stack<int[]> gStack = new Stack<>();
 
   public static void unaryNegationFunc() {
-    int[] result = g_stack.pop();
+    int[] result = gStack.pop();
 
-    for (int i = 0; i < g_size; i++) {
+    for (int i = 0; i < gSize; i++) {
       result[i] = Logic.unaryNegation(result[i]);
     }
-
-    g_stack.push(result);
+    gStack.push(result);
   }
 
   public static void multiplicationFunc() {
-    int[] res_table1 = g_stack.pop();
-    int[] res_table2 = g_stack.pop();
-    int[] result = new int[g_size];
+    int[] resTable1 = gStack.pop();
+    int[] resTable2 = gStack.pop();
+    int[] result = new int[gSize];
 
-    for (int i = 0; i < g_size; i++) {
-      result[i] = Logic.multiplication(res_table1[i], res_table2[i]);
+    for (int i = 0; i < gSize; i++) {
+      result[i] = Logic.multiplication(resTable1[i], resTable2[i]);
     }
-
-    g_stack.push(result);
+    gStack.push(result);
   }
 
   public static void calculate(String symbol) throws Exception {
@@ -37,50 +35,50 @@ public class Calculate {
     } else {
       int[] arr = null;
       if (symbol.charAt(0) == 'x') {
-        arr = new int[g_size];
-        for (int i = 0; i < g_size; i++) {
-          arr[i] = i / (g_size / g_k);
+        arr = new int[gSize];
+        for (int i = 0; i < gSize; i++) {
+          arr[i] = i / (gSize / gK);
         }
       } else if (symbol.charAt(0) == 'y') {
-        arr = new int[g_size];
-        for (int i = 0; i < g_size; i++) {
-          arr[i] = i % g_k;
+        arr = new int[gSize];
+        for (int i = 0; i < gSize; i++) {
+          arr[i] = i % gK;
         }
       } else {
         int temp = 0;
         if (AdditionalFunc.tryParse(symbol, new int[]{temp})) {
-          if (temp > g_k - 1) {
+          if (temp > gK - 1) {
             System.out.println("Найдено число больше k-1");
             throw new Exception();
           } else {
-            arr = new int[g_size];
-            for (int i = 0; i < g_size; i++) {
+            arr = new int[gSize];
+            for (int i = 0; i < gSize; i++) {
               arr[i] = temp;
             }
           }
         }
       }
       if (arr != null) {
-        g_stack.push(arr);
+        gStack.push(arr);
       }
     }
   }
 
   public static void makeFirstForm() {
-    int[] res_table1 = g_stack.pop();
+    int[] resTable1 = gStack.pop();
     boolean printed = false;
 
     System.out.print("Первая форма, аналог СДНФ: ");
 
-    if (g_n == 1) {
-      for (int i = 0; i < g_k; i++) {
-        if (res_table1[i] != 0) {
+    if (gN == 1) {
+      for (int i = 0; i < gK; i++) {
+        if (resTable1[i] != 0) {
           if (printed) {
             System.out.print(" & ");
           }
 
-          if (res_table1[i] != g_k - 1) {
-            System.out.print(res_table1[i] + "&");
+          if (resTable1[i] != gK - 1) {
+            System.out.print(resTable1[i] + "&");
           }
 
           System.out.print("J_" + i + "(x)");
@@ -89,15 +87,15 @@ public class Calculate {
       }
     } else {
       int iterator = 0;
-      for (int i = 0; i < g_k; i++) {
-        for (int j = 0; j < g_k; j++) {
-          if (res_table1[iterator] != 0) {
+      for (int i = 0; i < gK; i++) {
+        for (int j = 0; j < gK; j++) {
+          if (resTable1[iterator] != 0) {
             if (printed) {
               System.out.print(" & ");
             }
 
-            if (res_table1[iterator] != g_k - 1) {
-              System.out.print(res_table1[iterator] + "&");
+            if (resTable1[iterator] != gK - 1) {
+              System.out.print(resTable1[iterator] + "&");
             }
 
             System.out.print("J_" + i + "(x)&" + "J_" + j + "(y)");
