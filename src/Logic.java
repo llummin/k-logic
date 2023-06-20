@@ -2,11 +2,11 @@ public class Logic {
 
   public static int gK;
 
-  public static int unaryNegation(int x) {
-    return x > 0 ? gK - x : 0;
+  public static int unaryNegation(int input) {
+    return input > 0 ? gK - input : 0;
   }
 
-  public static int multiplication(int x, int y) {
-    return x * y % gK;
+  public static int multiply(int num1, int num2) {
+    return (num1 * num2) % gK;
   }
 }

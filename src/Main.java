@@ -1,12 +1,10 @@
 import java.util.Scanner;
-import java.util.Stack;
 
 public class Main {
 
   static int gK = 5;
   static int gN = 1;
   static int gSize;
-  static Stack<int[]> gStack = new Stack<>();
 
   public static void main(String[] args) {
     Scanner sc = new Scanner(System.in);
@@ -40,15 +38,13 @@ public class Main {
 
       try {
         analyze(input);
-        AdditionalFunc.printRes(input);
+        AdditionalFunc.printResult(input);
 
         Calculate.makeFirstForm();
 
         boolean check = false;
         SaveSet.saveSet(new boolean[]{check});
 
-        int[] result = gStack.pop();
-        result = null;
       } catch (Exception e) {
         System.out.println("\nВведенные данные некорректны!\n");
       }
@@ -60,23 +56,23 @@ public class Main {
   }
 
   static boolean check(String str) {
-    if (str.equals("")) {
+    if (str.isEmpty()) {
       System.out.println("Введена пустая строка!\n");
       return false;
     }
 
-    int openBackets = 0;
-    int closeBackets = 0;
+    int openParentheses = 0;
+    int closeParentheses = 0;
     boolean alert = false;
-    int temp = -1;
+
     for (int i = 0; i < str.length(); i++) {
       char c = str.charAt(i);
       if (c == '(') {
-        openBackets++;
+        openParentheses++;
       } else if (c == ')') {
         alert = false;
-        closeBackets++;
-      } else if (AdditionalFunc.tryParse(c)) {
+        closeParentheses++;
+      } else if (AdditionalFunc.isNumeric(c)) {
         alert = true;
       } else if (c == '*') {
         alert = false;
@@ -93,7 +89,7 @@ public class Main {
         return false;
       }
     }
-    if (openBackets != closeBackets) {
+    if (openParentheses != closeParentheses) {
       System.out.println("Первичный осмотр показал проблему в скобках\n");
       return false;
     }
@@ -101,55 +97,54 @@ public class Main {
   }
 
   static void analyze(String analyticForm) throws Exception {
-    int indexStart = -1;
-    int indexEnd = -1;
+    int startIndex = -1;
+    int endIndex = -1;
 
-    indexStart = analyticForm.indexOf('(');
+    startIndex = analyticForm.indexOf('(');
 
-    while (indexStart != -1) {
-      int countOpenBracket = 1;
-      indexEnd = indexStart;
-      while (countOpenBracket != 0) {
-        indexEnd++;
-        if (analyticForm.charAt(indexEnd) == '(') {
-          countOpenBracket++;
-        } else if (analyticForm.charAt(indexEnd) == ')') {
-          countOpenBracket--;
+    while (startIndex != -1) {
+      int openBracketCount = 1;
+      endIndex = startIndex;
+      while (openBracketCount != 0) {
+        endIndex++;
+        if (analyticForm.charAt(endIndex) == '(') {
+          openBracketCount++;
+        } else if (analyticForm.charAt(endIndex) == ')') {
+          openBracketCount--;
         }
       }
 
-      String new_form = analyticForm.substring(indexStart + 1, indexEnd);
-      analyticForm =
-          analyticForm.substring(0, indexStart) + analyticForm.substring(indexEnd + 1);
+      String newForm = analyticForm.substring(startIndex + 1, endIndex);
+      analyticForm = analyticForm.substring(0, startIndex) + analyticForm.substring(endIndex + 1);
 
-      analyze(new_form);
+      analyze(newForm);
 
-      indexStart = analyticForm.indexOf('(');
+      startIndex = analyticForm.indexOf('(');
     }
 
-    int indexMultiplacation = -1;
-    indexMultiplacation = analyticForm.indexOf('*');
+    int multiplicationIndex = -1;
+    multiplicationIndex = analyticForm.indexOf('*');
 
-    if (indexMultiplacation != -1) {
-      String frontPart = analyticForm.substring(0, indexMultiplacation);
-      String endPart = analyticForm.substring(indexMultiplacation + 1, analyticForm.length());
+    if (multiplicationIndex != -1) {
+      String frontPart = analyticForm.substring(0, multiplicationIndex);
+      String endPart = analyticForm.substring(multiplicationIndex + 1);
       analyticForm = "*";
-      if (frontPart.length() > 0) {
+      if (!frontPart.isEmpty()) {
         analyze(frontPart);
       }
-      if (endPart.length() > 0) {
+      if (!endPart.isEmpty()) {
         analyze(endPart);
       }
     }
 
-    int index_negotiation = -1;
-    index_negotiation = analyticForm.indexOf('-');
+    int negotiationIndex = -1;
+    negotiationIndex = analyticForm.indexOf('-');
 
-    if (index_negotiation != -1) {
-      String end_part = analyticForm.substring(index_negotiation + 1, analyticForm.length());
+    if (negotiationIndex != -1) {
+      String endPart = analyticForm.substring(negotiationIndex + 1);
       analyticForm = "-";
-      if (end_part.length() > 0) {
-        analyze(end_part);
+      if (!endPart.isEmpty()) {
+        analyze(endPart);
       }
     }
 

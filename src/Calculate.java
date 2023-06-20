@@ -1,114 +1,125 @@
-import java.util.Stack;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.function.IntUnaryOperator;
 
 public class Calculate {
 
-  public static int gK;
-  public static int gN;
-  public static int gSize;
-  public static Stack<int[]> gStack = new Stack<>();
+  private static final int DEFAULT_GK = 17;
+  private static final int DEFAULT_GN = 2;
+  private static final int DEFAULT_GSIZE = 10;
+  private static final Deque<int[]> DEFAULT_GSTACK = new LinkedList<>();
 
   public static void unaryNegationFunc() {
-    int[] result = gStack.pop();
+    int[] result = DEFAULT_GSTACK.pop();
 
-    for (int i = 0; i < gSize; i++) {
+    for (int i = 0; i < DEFAULT_GSIZE; i++) {
       result[i] = Logic.unaryNegation(result[i]);
     }
-    gStack.push(result);
+
+    DEFAULT_GSTACK.push(result);
   }
 
-  public static void multiplicationFunc() {
-    int[] resTable1 = gStack.pop();
-    int[] resTable2 = gStack.pop();
-    int[] result = new int[gSize];
+  public static void multiplyTables() {
+    int[] firstTable = DEFAULT_GSTACK.pop();
+    int[] secondTable = DEFAULT_GSTACK.pop();
+    int[] result = new int[DEFAULT_GSIZE];
 
-    for (int i = 0; i < gSize; i++) {
-      result[i] = Logic.multiplication(resTable1[i], resTable2[i]);
+    for (int i = 0; i < DEFAULT_GSIZE; i++) {
+      result[i] = Logic.multiply(firstTable[i], secondTable[i]);
     }
-    gStack.push(result);
+    DEFAULT_GSTACK.push(result);
   }
 
-  public static void calculate(String symbol) throws Exception {
+  public static void calculate(String symbol) throws InvalidSymbolException {
     if (symbol.charAt(0) == '*') {
-      multiplicationFunc();
+      multiplyTables();
     } else if (symbol.charAt(0) == '-') {
       unaryNegationFunc();
     } else {
-      int[] arr = null;
+      int[] arr;
+      int temp = 0;
       if (symbol.charAt(0) == 'x') {
-        arr = new int[gSize];
-        for (int i = 0; i < gSize; i++) {
-          arr[i] = i / (gSize / gK);
-        }
+        arr = generateArray(DEFAULT_GSIZE / DEFAULT_GK);
       } else if (symbol.charAt(0) == 'y') {
-        arr = new int[gSize];
-        for (int i = 0; i < gSize; i++) {
-          arr[i] = i % gK;
-        }
+        arr = generateArray(i -> i % DEFAULT_GK);
+      } else if (AdditionalFunc.isNumeric(symbol, new int[]{temp})) {
+        arr = generateArray(temp);
       } else {
-        int temp = 0;
-        if (AdditionalFunc.tryParse(symbol, new int[]{temp})) {
-          if (temp > gK - 1) {
-            System.out.println("Найдено число больше k-1");
-            throw new Exception();
-          } else {
-            arr = new int[gSize];
-            for (int i = 0; i < gSize; i++) {
-              arr[i] = temp;
-            }
-          }
-        }
+        throw new InvalidSymbolException("Invalid symbol: " + symbol);
       }
-      if (arr != null) {
-        gStack.push(arr);
-      }
+      DEFAULT_GSTACK.push(arr);
     }
   }
 
-  public static void makeFirstForm() {
-    int[] resTable1 = gStack.pop();
-    boolean printed = false;
+  private static int[] generateArray(int value) {
+    int[] arr = new int[Calculate.DEFAULT_GSIZE];
+    Arrays.fill(arr, value);
+    return arr;
+  }
 
+  private static int[] generateArray(IntUnaryOperator operator) {
+    int[] arr = new int[Calculate.DEFAULT_GSIZE];
+    for (int i = 0; i < Calculate.DEFAULT_GSIZE; i++) {
+      arr[i] = operator.applyAsInt(i);
+    }
+    return arr;
+  }
+
+  public static void makeFirstForm() {
+    int[] resTable = DEFAULT_GSTACK.pop();
     System.out.print("Первая форма, аналог СДНФ: ");
 
-    if (gN == 1) {
-      for (int i = 0; i < gK; i++) {
-        if (resTable1[i] != 0) {
-          if (printed) {
-            System.out.print(" & ");
-          }
+    if (DEFAULT_GN == 1) {
+      printSingleArgumentForm(resTable);
+    } else {
+      printDoubleArgumentForm(resTable);
+    }
 
-          if (resTable1[i] != gK - 1) {
-            System.out.print(resTable1[i] + "&");
-          }
+    System.out.println();
+  }
 
-          System.out.print("J_" + i + "(x)");
+  private static void printSingleArgumentForm(int[] resTable) {
+    boolean printed = false;
+    for (int i = 0; i < DEFAULT_GK; i++) {
+      if (resTable[i] != 0) {
+        printFormElement(resTable[i], i);
+        printed = true;
+      }
+    }
+    if (!printed) {
+      System.out.println("В таблице все нули!");
+    }
+  }
+
+  private static void printDoubleArgumentForm(int[] resTable) {
+    boolean printed = false;
+    int iterator = 0;
+
+    for (int i = 0; i < DEFAULT_GK; i++) {
+      for (int j = 0; j < DEFAULT_GK; j++) {
+        if (resTable[iterator] != 0) {
+          printFormElement(resTable[iterator], i, j);
           printed = true;
         }
-      }
-    } else {
-      int iterator = 0;
-      for (int i = 0; i < gK; i++) {
-        for (int j = 0; j < gK; j++) {
-          if (resTable1[iterator] != 0) {
-            if (printed) {
-              System.out.print(" & ");
-            }
-
-            if (resTable1[iterator] != gK - 1) {
-              System.out.print(resTable1[iterator] + "&");
-            }
-
-            System.out.print("J_" + i + "(x)&" + "J_" + j + "(y)");
-            printed = true;
-          }
-          iterator++;
-        }
+        iterator++;
       }
     }
 
     if (!printed) {
       System.out.println("В таблице все нули!");
     }
-    System.out.println();
+  }
+
+  private static void printFormElement(int value, int... arguments) {
+    if (arguments.length > 0) {
+      System.out.print(value > 0 ? value + "&" : "");
+      for (int i = 0; i < arguments.length; i++) {
+        System.out.print("J_" + arguments[i] + "(x)");
+        if (i < arguments.length - 1) {
+          System.out.print("&");
+        }
+      }
+    }
   }
 }

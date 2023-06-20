@@ -1,16 +1,17 @@
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Scanner;
-import java.util.Stack;
 
 public class AdditionalFunc {
 
-  public static int gK;
-  public static int gN;
-  public static int gSize;
-  public static Stack<int[]> gStack = new Stack<>();
+  private static final int DEFAULT_GK = 17;
+  private static final int DEFAULT_GN = 2;
+  private static final int DEFAULT_GSIZE = 10;
+  private static final Deque<int[]> DEFAULT_GSTACK = new LinkedList<>();
 
-  public static boolean tryParse(char ch) {
+  public static boolean isNumeric(char ch) {
+    String temp = String.valueOf(ch);
     try {
-      String temp = String.valueOf(ch);
       Integer.parseInt(temp);
       return true;
     } catch (NumberFormatException e) {
@@ -18,7 +19,7 @@ public class AdditionalFunc {
     }
   }
 
-  public static boolean tryParse(String str, int[] a) {
+  public static boolean isNumeric(String str, int[] a) {
     try {
       a[0] = Integer.parseInt(str);
       return true;
@@ -27,87 +28,95 @@ public class AdditionalFunc {
     }
   }
 
-  public static int getValue(int condition, String string) {
+  public static int getValue(int condition, String prompt) {
     Scanner scanner = new Scanner(System.in);
 
     while (true) {
-      int a;
+      int userInput;
       try {
-        a = scanner.nextInt();
+        userInput = scanner.nextInt();
       } catch (Exception e) {
-        System.out.println("Ошибка! Пожалуйста, повторите ввод! \n");
+        System.out.println("Ошибка! Пожалуйста, повторите ввод!\n");
         scanner.nextLine();
-        System.out.print(string);
+        System.out.print(prompt);
         continue;
       }
 
       switch (condition) {
-        case 15 -> {
-          if ((a > 0) && (a < 100)) {
-            return a;
+        case 15:
+          if (isValidInput(userInput, 100)) {
+            return userInput;
           }
-          System.out.println("Вы должны ввести натуральное число, меньше 100!\n Повторите ввод: ");
+          System.out.println("Вы должны ввести целое число от 0 до 100!\n Повторите ввод: ");
           scanner.nextLine();
-        }
-        case 16 -> {
-          if ((a == 0) || (a == 1)) {
-            return a;
+          break;
+        case 16:
+          if (isValidInput(userInput, 2)) {
+            return userInput;
           }
-          System.out.println("Вы должны ввести либо 0, либо 1\n");
+          System.out.println("Вы должны ввести либо 0, либо 1!\n Повторите ввод: ");
           scanner.nextLine();
-        }
-        case 17 -> {
-          if ((a > 0) && (a < 3)) {
-            return a;
+          break;
+        case 17:
+          if (isValidInput(userInput, 3)) {
+            return userInput;
           }
-          System.out.println("Вы должны ввести либо 1, либо 2! Повторите ввод: ");
+          System.out.println("Вы должны ввести либо 1, либо 2!\n Повторите ввод: ");
           scanner.nextLine();
-        }
-        default -> {
-          return a;
-        }
+          break;
+        default:
+          return userInput;
       }
     }
+  }
+
+  private static boolean isValidInput(int input, int max) {
+    return input > 0 && input < max;
   }
 
   public static void printHat() {
     System.out.println("Работу выполнил Елушев М.А, группа 4217");
     System.out.println("g = 17, n = 2.");
-    System.out.println(
-        "Функия одного аргумента - (g + n - 1)(mod 6) + 1 = 1 ~ -x    - Унарное отрицание");
+    System.out.println("Функция одного аргумента - (g + n - 1)(mod 6) + 1 = 1 ~ -x");
     System.out.println(
         "Функция двух аргументов - (g + n - 1)(mod 7) + 1 = 5 ~ x * y - Произведение по модулю k");
     System.out.println(
-        "Стандартная форма представления - (g + n - 1)(mod 3) + 1 = 1 ~ Первая форма (аналог СДНФ)\n\n");
-    System.out.println("Ввод функции: -x ~ Унарное отрицание, x*y ~ Произведение по модулю k\n");
+        "Стандартная форма представления - (g + n - 1)(mod 3) + 1 = 1 ~ Первая форма (аналог СДНФ)");
+    System.out.println();
+    System.out.println("Ввод функции: -x ~ Унарное отрицание, x*y ~ Произведение по модулю k");
   }
 
-  public static void printRes(String expression) {
-    int[] result = gStack.peek();
+  public static void printResult(String expression) {
+    int[] result = DEFAULT_GSTACK.peek();
     int temp = expression.length() % 2;
-    int width1 = (expression.length() + temp) / 2;
-    int width2 = (expression.length() - temp) / 2;
+    int width = (expression.length() - temp) / 2;
 
     System.out.println("\nРезультат работы программы:\n");
-    if (gN == 1) {
-      System.out.printf("| X | %-" + expression.length() + "s |\n", expression);
-      for (int i = 0; i < gSize; i++) {
-        System.out.printf("| %d | %-" + width1 + "d%-" + width2 + "s |\n", i, result[i], "");
+    if (DEFAULT_GN == 1) {
+      String headerFormat = "| X | %" + expression.length() + "s |\n";
+      System.out.printf(headerFormat, expression);
+      for (int i = 0; i < DEFAULT_GSIZE; i++) {
+        String rowFormat = "| %d | %d";
+        String row = String.format(rowFormat, i, result[i]);
+        System.out.println(row + " ".repeat(Math.max(0, width)) + " |");
       }
-    } else if (gN == 2) {
-      System.out.printf("| X | Y | %-" + expression.length() + "s |\n", expression);
-      for (int i = 0; i < gSize; i++) {
-        System.out.printf("| %d | %d | %-" + width1 + "d%-" + width2 + "s |\n", i / gK, i % gK,
-            result[i], "");
+    } else if (DEFAULT_GN == 2) {
+      String headerFormat = "| X | Y | %" + expression.length() + "s |\n";
+      System.out.printf(headerFormat, expression);
+      for (int i = 0; i < DEFAULT_GSIZE; i++) {
+        String rowFormat = "| %d | %d | %d";
+        assert result != null;
+        String row = String.format(rowFormat, 0, i % DEFAULT_GK, result[i]);
+        System.out.println(row + " ".repeat(width) + " |");
       }
     }
   }
 
   public static void cleanFromSpace(StringBuilder str) {
-    int index_start = str.indexOf(" ");
-    while (index_start != -1) {
-      str.deleteCharAt(index_start);
-      index_start = str.indexOf(" ");
+    int indexStart = str.indexOf(" ");
+    while (indexStart != -1) {
+      str.deleteCharAt(indexStart);
+      indexStart = str.indexOf(" ");
     }
   }
 }
