@@ -1,24 +1,34 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
 # Compiled class file
 *.class
 
-# Log file
-*.log
+# Maven-specific
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
 
-# BlueJ files
-*.ctxt
+# Maven files
+mvnw
+mvnw.cmd
+.mvn/
+mvn/
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# Gradle-specific
+.gradle/
+build/
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+# Eclipse-specific
+*.project
+*.classpath
+.settings/
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# Other
+*.swp
